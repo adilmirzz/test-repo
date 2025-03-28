@@ -1,9 +1,12 @@
 // This is a basic Flutter widget test.
 //
 // To perform an interaction with a widget in your test, use the WidgetTester
+<<<<<<< HEAD
 // This is a basic Flutter widget test.
 //
 // To perform an interaction with a widget in your test, use the WidgetTester
+=======
+>>>>>>> a430687 (commit)
 // utility in the flutter_test package. For example, you can send tap and scroll
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
@@ -16,7 +19,11 @@ import 'package:pcbuilder/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
+<<<<<<< HEAD
     await tester.pumpWidget(const PcBuilderApp());
+=======
+    await tester.pumpWidget(const MyApp());
+>>>>>>> a430687 (commit)
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

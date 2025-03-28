@@ -7,7 +7,11 @@ project(runner LANGUAGES CXX)
 set(BINARY_NAME "pcbuilder")
 # The unique GTK application identifier for this application. See:
 # https://wiki.gnome.org/HowDoI/ChooseApplicationID
+<<<<<<< HEAD
 set(APPLICATION_ID "com.nuvon.pcbuilder")
+=======
+set(APPLICATION_ID "com.example.pcbuilder")
+>>>>>>> a430687 (commit)
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

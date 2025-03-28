@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+=======
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.manmohan.pcbuilder">
+
+>>>>>>> a430687 (commit)
     <application
         android:label="pcbuilder"
         android:name="${applicationName}"

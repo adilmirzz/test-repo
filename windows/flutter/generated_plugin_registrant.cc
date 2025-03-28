@@ -6,12 +6,24 @@
 
 #include "generated_plugin_registrant.h"
 
+<<<<<<< HEAD
+=======
+#include <cloud_firestore/cloud_firestore_plugin_c_api.h>
+#include <firebase_auth/firebase_auth_plugin_c_api.h>
+>>>>>>> a430687 (commit)
 #include <firebase_core/firebase_core_plugin_c_api.h>
 #include <flutter_secure_storage_windows/flutter_secure_storage_windows_plugin.h>
 #include <share_plus/share_plus_windows_plugin_c_api.h>
 #include <url_launcher_windows/url_launcher_windows.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
+<<<<<<< HEAD
+=======
+  CloudFirestorePluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("CloudFirestorePluginCApi"));
+  FirebaseAuthPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("FirebaseAuthPluginCApi"));
+>>>>>>> a430687 (commit)
   FirebaseCorePluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FirebaseCorePluginCApi"));
   FlutterSecureStorageWindowsPluginRegisterWithRegistrar(

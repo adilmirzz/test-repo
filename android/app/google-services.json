@@ -1,6 +1,10 @@
 {
   "project_info": {
     "project_number": "976720855178",
+<<<<<<< HEAD
+=======
+    "firebase_url": "https://pc-12311-default-rtdb.firebaseio.com",
+>>>>>>> a430687 (commit)
     "project_id": "pc-12311",
     "storage_bucket": "pc-12311.firebasestorage.app"
   },

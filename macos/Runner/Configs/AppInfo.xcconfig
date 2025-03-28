@@ -8,7 +8,14 @@
 PRODUCT_NAME = pcbuilder
 
 // The application's bundle identifier
+<<<<<<< HEAD
 PRODUCT_BUNDLE_IDENTIFIER = com.nuvon.pcbuilder
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.nuvon. All rights reserved.
+=======
+PRODUCT_BUNDLE_IDENTIFIER = com.example.pcbuilder
+
+// The copyright displayed in application information
+PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.
+>>>>>>> a430687 (commit)

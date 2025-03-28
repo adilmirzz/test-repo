@@ -89,11 +89,19 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
+<<<<<<< HEAD
             VALUE "CompanyName", "com.nuvon" "\0"
             VALUE "FileDescription", "pcbuilder" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "pcbuilder" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.nuvon. All rights reserved." "\0"
+=======
+            VALUE "CompanyName", "com.example" "\0"
+            VALUE "FileDescription", "pcbuilder" "\0"
+            VALUE "FileVersion", VERSION_AS_STRING "\0"
+            VALUE "InternalName", "pcbuilder" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
+>>>>>>> a430687 (commit)
             VALUE "OriginalFilename", "pcbuilder.exe" "\0"
             VALUE "ProductName", "pcbuilder" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
