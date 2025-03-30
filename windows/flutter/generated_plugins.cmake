@@ -3,11 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-<<<<<<< HEAD
-=======
   cloud_firestore
   firebase_auth
->>>>>>> a430687 (commit)
   firebase_core
   flutter_secure_storage_windows
   share_plus
