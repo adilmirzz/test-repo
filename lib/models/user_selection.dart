@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../main.dart';
 import 'pc_part.dart';
+import 'package:pcbuilder/models/pc_part.dart';
 
 class UserSelection with ChangeNotifier {
   final Map<String, PCPart?> selectedParts = {
@@ -60,8 +61,10 @@ class UserSelection with ChangeNotifier {
 
     if (category == 'ram' && motherboard != null) {
       final motherboardChipset = motherboard.additionalFields['chipset'];
-      final compatibleChipsets = List<String>.from(part.additionalFields['compatibleChipsets'] ?? []);
-      print("Motherboard Chipset: $motherboardChipset, Compatible Chipsets: $compatibleChipsets");
+      final compatibleChipsets =
+          List<String>.from(part.additionalFields['compatibleChipsets'] ?? []);
+      print(
+          "Motherboard Chipset: $motherboardChipset, Compatible Chipsets: $compatibleChipsets");
       return compatibleChipsets.contains(motherboardChipset);
     }
 
@@ -74,13 +77,15 @@ class UserSelection with ChangeNotifier {
     }
 
     if (category == 'cpu_cooler' && processor != null) {
-      return part.additionalFields['socket'] == processor.additionalFields['socket'];
+      return part.additionalFields['socket'] ==
+          processor.additionalFields['socket'];
     }
 
     if (category == 'case_fan' && part.additionalFields['fan_size'] != null) {
       final casePart = selectedParts['case'];
       return casePart != null &&
-             casePart.additionalFields['fan_support'].contains(part.additionalFields['fan_size']);
+          casePart.additionalFields['fan_support']
+              .contains(part.additionalFields['fan_size']);
     }
 
     return true;
@@ -89,5 +94,15 @@ class UserSelection with ChangeNotifier {
   void clearSelection() {
     selectedParts.forEach((key, _) => selectedParts[key] = null);
     notifyListeners();
+  }
+
+  double getTotalCost() {
+    double total = 0;
+    selectedParts.forEach((category, part) {
+      if (part != null) {
+        total += part.price;
+      }
+    });
+    return total;
   }
 }

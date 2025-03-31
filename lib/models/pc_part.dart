@@ -25,6 +25,16 @@ class PCPart {
 
   factory PCPart.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    Map<String, dynamic> filteredData = Map<String, dynamic>.from(data);
+    filteredData.remove('name');
+    filteredData.remove('category');
+    filteredData.remove('price');
+    filteredData.remove('brand');
+    filteredData.remove('form_factor');
+    filteredData.remove('rgb');
+    filteredData.remove('side_panel');
+    filteredData.remove('type');
+
     return PCPart(
       name: data['name'] ?? '',
       category: data['category'] ?? '',
@@ -34,7 +44,21 @@ class PCPart {
       rgb: data['rgb'] ?? false,
       sidePanel: data['side_panel'] ?? '',
       type: data['type'] ?? '',
-      additionalFields: Map<String, dynamic>.from(data),
+      additionalFields: filteredData,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'category': category,
+      'price': price,
+      'brand': brand,
+      'form_factor': formFactor,
+      'rgb': rgb,
+      'side_panel': sidePanel,
+      'type': type,
+      'additionalFields': additionalFields,
+    };
   }
 }

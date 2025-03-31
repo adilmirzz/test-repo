@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'models/user_selection.dart';
 import 'models/pc_part.dart';
 import 'screens/selection_summary_screen.dart';
+import 'package:share_plus/share_plus.dart';
+import 'screens/saved_builds_screen.dart'; // Import the new screen
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +46,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: _themeMode,
-      home: HomePage(toggleTheme: toggleTheme), // Use HomePage as the initial screen
+      home: HomePage(toggleTheme: toggleTheme),
     );
   }
 }
@@ -74,13 +76,22 @@ class HomePage extends StatelessWidget {
             icon: const Icon(Icons.brightness_6),
             onPressed: toggleTheme,
           ),
+          IconButton(
+            icon: const Icon(Icons.folder_shared), // Add the saved builds icon
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SavedBuildsScreen()),
+              );
+            },
+          ),
         ],
       ),
       body: Stack(
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/pc_background.jpg', // Replace with your image path
+            'assets/pc_background.jpg',
             fit: BoxFit.cover,
           ),
           Center(
@@ -92,7 +103,8 @@ class HomePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => PCPartsScreen(toggleTheme: toggleTheme)),
+                          builder: (context) =>
+                              PCPartsScreen(toggleTheme: toggleTheme)),
                     );
                   },
                   child: const Text('Choose PC Parts'),
@@ -105,6 +117,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
 
 class PCPartsScreen extends StatefulWidget {
   final VoidCallback toggleTheme;
@@ -168,8 +181,7 @@ class _PCPartsScreenState extends State<PCPartsScreen> {
             items: categories.map((category) {
               return DropdownMenuItem<String>(
                 value: category,
-                child:
-                    Text(category, style: const TextStyle(color: Colors.white)),
+                child: Text(category, style: const TextStyle(color: Colors.white)),
               );
             }).toList(),
           ),
@@ -180,6 +192,15 @@ class _PCPartsScreenState extends State<PCPartsScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => const SelectionSummaryScreen()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.folder_shared),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SavedBuildsScreen()),
               );
             },
           ),
@@ -237,6 +258,12 @@ class _PCPartsScreenState extends State<PCPartsScreen> {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showSaveAndShareDialog(context);
+        },
+        child: const Icon(Icons.save_alt),
+      ),
     );
   }
 
@@ -267,4 +294,113 @@ class _PCPartsScreenState extends State<PCPartsScreen> {
       ),
     );
   }
+
+  void _showSaveAndShareDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Save & Share Build'),
+          content: const Text('Do you want to save or share your build?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _saveBuild(context);
+              },
+              child: const Text('Save'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _shareBuild(context);
+              },
+              child: const Text('Share'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+void _saveBuild(BuildContext context) async {
+  final userSelection = Provider.of<UserSelection>(context, listen: false);
+  final totalCost = userSelection.getTotalCost();
+
+  print("UserSelection.selectedParts: ${userSelection.selectedParts}");
+  print("Total Cost: $totalCost");
+
+  // Function to recursively convert maps to have string keys
+  Map<String, dynamic> convertMapKeysToString(Map<String, dynamic> inputMap) {
+    Map<String, dynamic> convertedMap = {};
+    inputMap.forEach((key, value) {
+      if (value is Map) {
+        convertedMap[key] = convertMapKeysToString(Map<String, dynamic>.from(value));
+      } else {
+        convertedMap[key] = value;
+      }
+    });
+    return convertedMap;
+  }
+
+  // Prepare the build data
+  Map<String, dynamic> buildData = {};
+  userSelection.selectedParts.forEach((category, part) {
+    if (part != null) {
+      // Ensure all maps have string keys
+      buildData[category] = convertMapKeysToString(part.toJson());
+    }
+  });
+
+  // Add the total cost to the build data
+  buildData['totalCost'] = totalCost;
+
+  try {
+    print("buildData: $buildData");
+
+    // Save the build data to Firestore
+    await FirebaseFirestore.instance.collection('pc_builds').add(buildData).then(
+        (value) {
+      print("Build saved successfully");
+    }).onError((error, stackTrace) {
+      print("Error saving build: $error");
+      if (stackTrace != null) {
+        print("StackTrace: $stackTrace");
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save build: $error')),
+      );
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Build saved successfully!')),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to save build: $e')),
+    );
+  }
+}
+
+// In PCPartsScreen's _PCPartsScreenState class:
+void _shareBuild(BuildContext context) {
+  final userSelection = Provider.of<UserSelection>(context, listen: false);
+  final totalCost = userSelection.getTotalCost(); // Get the total cost
+
+  String shareText = 'My PC Build:\n';
+  userSelection.selectedParts.forEach((category, part) {
+    if (part != null) {
+      shareText += '$category: ${part?.name ?? 'Unknown'} (₹${part?.price.toStringAsFixed(2) ?? '0.00'})\n';
+    }
+  });
+
+  // Add the total cost to the share text
+  shareText += '\nTotal Cost: ₹${totalCost.toStringAsFixed(2)}';
+
+  Share.share(shareText);
+}
 }
