@@ -232,67 +232,75 @@ class _PCPartsScreenState extends State<PCPartsScreen> {
     );
   }
 
-  void _saveBuild(BuildContext context) async {
-    final userSelection = Provider.of<UserSelection>(context, listen: false);
-    final totalCost = userSelection.getTotalCost();
+ void _saveBuild(BuildContext context) async {
+  final userSelection = Provider.of<UserSelection>(context, listen: false);
+  final totalCost = userSelection.getTotalCost();
 
-    print("UserSelection.selectedParts: ${userSelection.selectedParts}");
-    print("Total Cost: $totalCost");
+  print("UserSelection.selectedParts: ${userSelection.selectedParts}");
+  print("Total Cost: $totalCost");
 
-    Map<String, dynamic> convertMapKeysToString(Map<String, dynamic> inputMap) {
-      Map<String, dynamic> convertedMap = {};
-      inputMap.forEach((key, value) {
-        if (value is Map) {
-          convertedMap[key] =
-              convertMapKeysToString(Map<String, dynamic>.from(value));
-        } else {
-          convertedMap[key] = value;
-        }
-      });
-      return convertedMap;
-    }
-
-    List<MapEntry<String, dynamic>> buildData =
-        userSelection.selectedParts.entries.map((entry) {
-      if (entry.value != null) {
-        Map<String, dynamic> convertedJson =
-            convertMapKeysToString(entry.value!.toJson());
-        return MapEntry(entry.key, convertedJson);
+  Map<String, dynamic> convertMapKeysToString(Map<String, dynamic> inputMap) {
+    Map<String, dynamic> convertedMap = {};
+    inputMap.forEach((key, value) {
+      if (value is Map) {
+        convertedMap[key] =
+            convertMapKeysToString(Map<String, dynamic>.from(value));
       } else {
-        return MapEntry(entry.key, {});
+        convertedMap[key] = value;
       }
-    }).toList();
-
-    buildData.add(MapEntry('totalCost', totalCost));
-
-    try {
-      Map<String, dynamic> buildMap = Map.fromEntries(buildData);
-
-      print("buildMap: $buildMap");
-
-      await FirebaseFirestore.instance.collection('pc_builds').add(buildMap).then(
-          (value) {
-        print("Build saved successfully");
-      }).onError((error, stackTrace) {
-        print("Error saving build: $error");
-        if (stackTrace != null) {
-          print("StackTrace: $stackTrace");
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save build: $error')),
-        );
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Build saved successfully!')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save build: $e')),
-      );
-    }
+    });
+    return convertedMap;
   }
 
+  Map<String, dynamic> buildMap = {}; // Directly create a Map
+
+  userSelection.selectedParts.entries.forEach((entry) {
+    if (entry.value != null) {
+      Map<String, dynamic> reducedPartData = {};
+
+      reducedPartData['name'] = entry.value!.name;
+      reducedPartData['price'] = entry.value!.price;
+
+      if (entry.value!.imageUrl != null && entry.value!.imageUrl!.isNotEmpty) {
+        reducedPartData['imageUrl'] = entry.value!.imageUrl;
+      }
+
+      Map<String, dynamic> convertedJson =
+          convertMapKeysToString(reducedPartData);
+
+      buildMap[entry.key] = convertedJson; // Add to the map directly
+    } else {
+      buildMap[entry.key] = {};
+    }
+  });
+
+  buildMap['totalCost'] = totalCost; // Add total cost
+
+  try {
+    print("buildMap before saving: $buildMap");
+
+    await FirebaseFirestore.instance.collection('pc_builds').add(buildMap).then(
+        (value) {
+      print("Build saved successfully");
+    }).onError((error, stackTrace) {
+      print("Error saving build: $error");
+      if (stackTrace != null) {
+        print("StackTrace: $stackTrace");
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save build: $error')),
+      );
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Build saved successfully!')),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to save build: $e')),
+    );
+  }
+}
   void _shareBuild(BuildContext context) {
     final userSelection = Provider.of<UserSelection>(context, listen: false);
     final totalCost = userSelection.getTotalCost();
