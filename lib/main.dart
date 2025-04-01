@@ -7,8 +7,8 @@ import 'models/user_selection.dart';
 import 'models/pc_part.dart';
 import 'screens/selection_summary_screen.dart';
 import 'package:share_plus/share_plus.dart';
-import 'screens/saved_builds_screen.dart'; // Import the new screen
-
+import 'screens/saved_builds_screen.dart'; 
+import 'screens/budget_mode_screen.dart'; 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -46,6 +46,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: _themeMode,
+      debugShowCheckedModeBanner: false,
       home: HomePage(toggleTheme: toggleTheme),
     );
   }
@@ -98,17 +99,17 @@ class HomePage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              PCPartsScreen(toggleTheme: toggleTheme)),
-                    );
-                  },
-                  child: const Text('Choose PC Parts'),
-                ),
+                // In main.dart
+ElevatedButton(
+    onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => BudgetModeScreen(toggleTheme: toggleTheme)),
+        );
+    },
+    child: const Text('Choose PC Parts'),
+),
               ],
             ),
           ),

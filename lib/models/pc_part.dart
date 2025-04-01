@@ -10,6 +10,7 @@ class PCPart {
   final String sidePanel;
   final String type;
   final Map<String, dynamic> additionalFields;
+  final String? imageUrl; // Add imageUrl
 
   PCPart({
     required this.name,
@@ -21,6 +22,7 @@ class PCPart {
     required this.sidePanel,
     required this.type,
     required this.additionalFields,
+    this.imageUrl, // Add imageUrl to constructor
   });
 
   factory PCPart.fromFirestore(DocumentSnapshot doc) {
@@ -34,6 +36,7 @@ class PCPart {
     filteredData.remove('rgb');
     filteredData.remove('side_panel');
     filteredData.remove('type');
+    filteredData.remove('imageUrl'); // Remove imageUrl from filteredData
 
     return PCPart(
       name: data['name'] ?? '',
@@ -45,6 +48,7 @@ class PCPart {
       sidePanel: data['side_panel'] ?? '',
       type: data['type'] ?? '',
       additionalFields: filteredData,
+      imageUrl: data['imageUrl'], // Add imageUrl from Firestore
     );
   }
 
@@ -59,6 +63,7 @@ class PCPart {
       'side_panel': sidePanel,
       'type': type,
       'additionalFields': additionalFields,
+      'imageUrl': imageUrl, // Add imageUrl to toJson
     };
   }
 }
